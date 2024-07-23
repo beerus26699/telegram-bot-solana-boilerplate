@@ -15,7 +15,7 @@ export const startBot = async (ctx: Scenes.SceneContext) => {
         `🟢Buy gas priority fee: +16 Gwei\n` +
         `🔴Sell gas priority fee: +6 Gwei\n`;
 
-    const bottmButtons: { label: string; callbackAction: string }[][] = [
+    const bottomButtons: { label: string; callbackAction: string }[][] = [
         [
             {
                 label: '🔌 Import Wallet',
@@ -78,7 +78,7 @@ export const startBot = async (ctx: Scenes.SceneContext) => {
         ],
     ];
 
-    const inlineKeyboards: InlineKeyboardButton[][] = bottmButtons.map((row) =>
+    const inlineKeyboards: InlineKeyboardButton[][] = bottomButtons.map((row) =>
         row.map(
             (button): InlineKeyboardButton => ({
                 text: button.label,
