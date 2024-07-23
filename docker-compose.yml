@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  nestjs-api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - mysql-db
+    volumes:
+      - ./.env:/app/.env
+    ports:
+      - "3000:3000"
+    networks:
+      - hai_core
+
+  mysql-db:
+    image: mysql:8.0.33
+    volumes:
+      - ../mysql-data:/data
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: hai@123456
+      MYSQL_DATABASE: hai_core
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: hai@123456
+    networks:
+      - hai_core
+
+  # postgres-db:
+  #   image: postgres
+  #   environment:
+  #     - POSTGRES_PASSWORD=postgres
+  #   container_name: postgres
+  #   volumes:
+  #     - ./pgdata:/var/lib/postgresql/data
+  #   ports:
+  #     - '5432:5432'
+
+networks:
+  hai_core:
