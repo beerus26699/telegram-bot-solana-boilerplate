@@ -3,9 +3,13 @@ import { Context, Scenes } from 'telegraf';
 import { BotActions, MessageContent } from './bot.enum';
 import { Keypair } from '@solana/web3.js';
 import bs58 from 'bs58';
+import { UsersService } from '../users/users.service';
+import { importWalletInlineButton, generateWalletInlineButton } from './commands/start.command';
 
 @Update()
 export class BotAction {
+    constructor(private usersService: UsersService) {}
+
     @Action(BotActions.ImportWallet)
     async actionImportWallet(@Ctx() ctx: Context) {
         // // Explicit usage
@@ -16,7 +20,7 @@ export class BotAction {
         // const result = []
         // // Explicit usage
         // await ctx.telegram.answerInlineQuery(ctx.inlineQuery.id, result)
-      
+
         // // Using context shortcut
         // await ctx.answerInlineQuery(result)
 
@@ -46,17 +50,20 @@ export class BotAction {
     @Action(BotActions.GenerateWallet)
     async actionGenerateWallet(@Ctx() ctx: Scenes.SceneContext) {
         const wallet = Keypair.generate();
+        const publicKey = wallet.publicKey.toBase58();
+        const privateKey = bs58.encode(wallet.secretKey);
         const text =
             `✅ Wallet generated successfully:\n` +
-            `Wallet address: <code>${wallet.publicKey.toBase58()}</code>\n` +
-            `Wallet private key: <tg-spoiler>${bs58.encode(wallet.secretKey)}</tg-spoiler>`;
+            `Wallet address: <code>${publicKey}</code>\n` +
+            `Wallet private key: <tg-spoiler>${privateKey}</tg-spoiler>`;
 
-        console.log(ctx.from);
-        const message = await ctx.reply(text, { parse_mode: 'HTML' });
-        console.log(
-            '🚀 ~ BotAction ~ actionGenerateWallet ~ message:',
-            message,
-        );
+        await this.usersService.createUser({
+            userId: ctx.from.id,
+            privateKey,
+            publicKey,
+            username: ctx.from.username || ctx.from.first_name,
+        });
+        await ctx.reply(text, { parse_mode: 'HTML' });
     }
 
     @Action(BotActions.BuySell)
@@ -81,7 +88,24 @@ export class BotAction {
 
     @Action(BotActions.Wallet)
     async actionWallet(@Ctx() ctx: Scenes.SceneContext) {
-        await ctx.reply('You click Wallet');
+        const userId = ctx.from.id;
+
+        const wallets = await this.usersService.findWalletsByUserId(userId);
+        const content =
+            `Wallets (${wallets.length}) 💳\n` +
+            '----------------------------------------------------------------------------------------------------\n';
+
+        const inlineWallets = wallets.map((wallet, index) => [
+            { text: `${index+1}. ${wallet.publicKey}`, callback_data: 'default' },
+            { text: '0.000 SOL', callback_data: 'default' },
+            { text: '0.000 WSOL', callback_data: 'default' },
+        ])
+        await ctx.reply(content, {
+            parse_mode: 'HTML',
+            reply_markup: {
+                inline_keyboard: [...inlineWallets, [importWalletInlineButton, generateWalletInlineButton]],
+            },
+        });
     }
 
     @Action(BotActions.Settings)

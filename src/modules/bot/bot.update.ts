@@ -37,6 +37,7 @@ export class BotUpdate {
     @On('text')
     async onText(@Ctx() ctx: Scenes.WizardContext, @Message('text') msg: string,) {
         const message: CustomMessage = ctx.message;
+        const userId = ctx.from.id;
         if (message.reply_to_message) {
             const repliedMessage = message.reply_to_message;
             if (

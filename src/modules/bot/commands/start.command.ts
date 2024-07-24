@@ -2,6 +2,16 @@ import { Scenes } from 'telegraf';
 import { BotActions } from '../bot.enum';
 import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram';
 
+export const importWalletInlineButton: InlineKeyboardButton = {
+    text: '🔌 Import Wallet',
+    callback_data: BotActions.ImportWallet,
+};
+
+export const generateWalletInlineButton: InlineKeyboardButton = {
+    text: '💳Generate Wallet',
+    callback_data: BotActions.GenerateWallet,
+};
+
 export const startBot = async (ctx: Scenes.SceneContext) => {
     const wallet_address = 'wallet_address';
     const message =

@@ -8,12 +8,15 @@ export type UserDocument = User & Document;
 })
 export class User {
     @Prop({ required: true })
+    userId: string;
+
+    @Prop({ required: true })
     username: string;
 
-    @Prop({ required: true })
+    @Prop({ required: true, unique: true })
     publicKey: string;
 
-    @Prop({ required: true })
+    @Prop({ required: true, unique: true })
     privateKey: string;
 }
 

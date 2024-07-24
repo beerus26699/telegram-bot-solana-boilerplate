@@ -5,7 +5,7 @@
 
 ## Installation
 
-- Copy file **_env.sample.yml_** to file **_env.yml_**. Fill information of env file.
+- Copy file **_.env.sample_** to file **_.env_**. Fill information of env file.
 
     - Run command line
     > #### Local Environment

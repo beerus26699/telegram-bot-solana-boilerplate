@@ -16,4 +16,8 @@ export class UsersService {
         await user.save();
         return true;
     }
+
+    async findWalletsByUserId(userId: number) {
+        return await this.userModel.find({ userId });
+    }
 }
