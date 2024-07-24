@@ -8,8 +8,6 @@ import AppConfig from './config/app.config';
 import TelegramConfig from './config/telegram.config';
 import { TelegramModule } from './thirdparty/telegram/telegram.module';
 import { BotModule } from './modules/bot/bot.module';
-import { TelegrafModule } from 'nestjs-telegraf';
-import { HainvBotName } from './shared/constants/app.constant';
 
 @Module({
     imports: [
@@ -17,22 +15,9 @@ import { HainvBotName } from './shared/constants/app.constant';
             isGlobal: true,
             load: [DatabaseConfig, AppConfig, TelegramConfig],
         }),
-        
         BotModule,
-        // TelegrafModule.forRootAsync({
-        //     imports: [BotModule],
-        //     useFactory: (configService: ConfigService) => ({
-        //         botName: HainvBotName,
-        //         include: [BotModule],
-        //         token: configService.get<string>('telegram.botToken'),
-        //         launchOptions: !configService.get<boolean>('telegram.enabled')
-        //             ? configService.get<boolean>('telegram.enabled')
-        //             : {},
-        //     }),
-        //     inject: [ConfigService],
-        // }),
+        DatabaseModule,
         TelegramModule,
-        // DatabaseModule,
     ],
     controllers: [],
     providers: [
