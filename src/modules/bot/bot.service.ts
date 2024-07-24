@@ -1,5 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Keypair } from '@solana/web3.js';
 import { TelegramService } from 'src/thirdparty/telegram/telegram.service';
+import bs58 from "bs58";
 
 @Injectable()
 export class BotService implements OnModuleInit {

@@ -12,3 +12,7 @@ export enum BotActions {
     InviteFriends = 'InviteFriends',
     SolBot = 'SolBot',
 }
+
+export enum MessageContent {
+    ImportWallet = 'Enter private key',
+}
