@@ -1,23 +1,23 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type UserDocument = User & Document;
+export type UserDocument = Wallet & Document;
 
 @Schema({
     timestamps: true,
 })
-export class User {
+export class Wallet {
     @Prop({ required: true })
     userId: string;
 
     @Prop({ required: true })
     username: string;
 
-    @Prop({ required: true, unique: true })
+    @Prop({ required: true })
     publicKey: string;
 
-    @Prop({ required: true, unique: true })
-    privateKey: string;
+    @Prop({ required: true })
+    hashPrivateKey: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const WalletSchema = SchemaFactory.createForClass(Wallet);

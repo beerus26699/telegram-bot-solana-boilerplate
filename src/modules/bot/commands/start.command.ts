@@ -1,6 +1,7 @@
 import { Scenes } from 'telegraf';
 import { BotActions } from '../bot.enum';
 import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram';
+import { ArrayHelper } from 'src/shared/helpers/array.helper';
 
 export const importWalletInlineButton: InlineKeyboardButton = {
     text: '🔌 Import Wallet',
@@ -11,6 +12,51 @@ export const generateWalletInlineButton: InlineKeyboardButton = {
     text: '💳Generate Wallet',
     callback_data: BotActions.GenerateWallet,
 };
+
+const inlineActions = [
+    importWalletInlineButton,
+    generateWalletInlineButton,
+    {
+        text: '💰Buy/Sell',
+        callback_data: BotActions.BuySell,
+    },
+    {
+        text: '📌Limit Order',
+        callback_data: BotActions.LimitOrder,
+    },
+    {
+        text: '👥Copy Trading',
+        callback_data: BotActions.CopyTrading,
+    },
+    {
+        text: '🏦Asset',
+        callback_data: BotActions.Asset,
+    },
+    {
+        text: '💳Wallet',
+        callback_data: BotActions.Wallet,
+    },
+    {
+        text: '⚙️Settings',
+        callback_data: BotActions.Settings,
+    },
+    {
+        text: '🇺🇸Language',
+        callback_data: BotActions.Language,
+    },
+    {
+        text: '📖Help',
+        callback_data: BotActions.Help,
+    },
+    {
+        text: '🏆Invite friends',
+        callback_data: BotActions.InviteFriends,
+    },
+    {
+        text: 'Sol Bot',
+        callback_data: BotActions.SolBot,
+    },
+];
 
 export const startBot = async (ctx: Scenes.SceneContext) => {
     const wallet_address = 'wallet_address';
@@ -25,74 +71,14 @@ export const startBot = async (ctx: Scenes.SceneContext) => {
         `🟢Buy gas priority fee: +16 Gwei\n` +
         `🔴Sell gas priority fee: +6 Gwei\n`;
 
-    const bottomButtons: { label: string; callbackAction: string }[][] = [
-        [
-            {
-                label: '🔌 Import Wallet',
-                callbackAction: BotActions.ImportWallet,
-            },
-            {
-                label: '💳Generate Wallet',
-                callbackAction: BotActions.GenerateWallet,
-            },
-        ],
-        [
-            {
-                label: '💰Buy/Sell',
-                callbackAction: BotActions.BuySell,
-            },
-            {
-                label: '📌Limit Order',
-                callbackAction: BotActions.LimitOrder,
-            },
-        ],
-        [
-            {
-                label: '👥Copy Trading',
-                callbackAction: BotActions.CopyTrading,
-            },
-            {
-                label: '🏦Asset',
-                callbackAction: BotActions.Asset,
-            },
-        ],
-        [
-            {
-                label: '💳Wallet',
-                callbackAction: BotActions.Wallet,
-            },
-            {
-                label: '⚙️Settings',
-                callbackAction: BotActions.Settings,
-            },
-        ],
-        [
-            {
-                label: '🇺🇸Language',
-                callbackAction: BotActions.Language,
-            },
-            {
-                label: '📖Help',
-                callbackAction: BotActions.Help,
-            },
-        ],
-        [
-            {
-                label: '🏆Invite friends',
-                callbackAction: BotActions.InviteFriends,
-            },
-            {
-                label: 'Sol Bot',
-                callbackAction: BotActions.SolBot,
-            },
-        ],
-    ];
+    const bottomButtons: InlineKeyboardButton.CallbackButton[][] =
+        ArrayHelper.sliceAndMerge(inlineActions, 2);
 
     const inlineKeyboards: InlineKeyboardButton[][] = bottomButtons.map((row) =>
         row.map(
             (button): InlineKeyboardButton => ({
-                text: button.label,
-                callback_data: button.callbackAction,
+                text: button.text,
+                callback_data: button.callback_data,
             }),
         ),
     );

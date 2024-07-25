@@ -1,14 +1,15 @@
 import { Action, Ctx, Update } from 'nestjs-telegraf';
 import { Context, Scenes } from 'telegraf';
 import { BotActions, MessageContent } from './bot.enum';
-import { Keypair } from '@solana/web3.js';
-import bs58 from 'bs58';
-import { UsersService } from '../users/users.service';
-import { importWalletInlineButton, generateWalletInlineButton } from './commands/start.command';
+import {
+    importWalletInlineButton,
+    generateWalletInlineButton,
+} from './commands/start.command';
+import { BotService } from './bot.service';
 
 @Update()
 export class BotAction {
-    constructor(private usersService: UsersService) {}
+    constructor(private botService: BotService) {}
 
     @Action(BotActions.ImportWallet)
     async actionImportWallet(@Ctx() ctx: Context) {
@@ -49,20 +50,12 @@ export class BotAction {
 
     @Action(BotActions.GenerateWallet)
     async actionGenerateWallet(@Ctx() ctx: Scenes.SceneContext) {
-        const wallet = Keypair.generate();
-        const publicKey = wallet.publicKey.toBase58();
-        const privateKey = bs58.encode(wallet.secretKey);
+        const { privateKey, publicKey } =
+            await this.botService.handleCreateWallet(ctx);
         const text =
             `✅ Wallet generated successfully:\n` +
             `Wallet address: <code>${publicKey}</code>\n` +
             `Wallet private key: <tg-spoiler>${privateKey}</tg-spoiler>`;
-
-        await this.usersService.createUser({
-            userId: ctx.from.id,
-            privateKey,
-            publicKey,
-            username: ctx.from.username || ctx.from.first_name,
-        });
         await ctx.reply(text, { parse_mode: 'HTML' });
     }
 
@@ -88,22 +81,27 @@ export class BotAction {
 
     @Action(BotActions.Wallet)
     async actionWallet(@Ctx() ctx: Scenes.SceneContext) {
-        const userId = ctx.from.id;
-
-        const wallets = await this.usersService.findWalletsByUserId(userId);
+        await ctx.reply('💳');
+        const wallets = await this.botService.handleGetWallets(ctx.from.id);
         const content =
             `Wallets (${wallets.length}) 💳\n` +
             '----------------------------------------------------------------------------------------------------\n';
 
         const inlineWallets = wallets.map((wallet, index) => [
-            { text: `${index+1}. ${wallet.publicKey}`, callback_data: 'default' },
+            {
+                text: `${index + 1}. ${wallet.publicKey}`,
+                callback_data: 'default',
+            },
             { text: '0.000 SOL', callback_data: 'default' },
             { text: '0.000 WSOL', callback_data: 'default' },
-        ])
+        ]);
         await ctx.reply(content, {
             parse_mode: 'HTML',
             reply_markup: {
-                inline_keyboard: [...inlineWallets, [importWalletInlineButton, generateWalletInlineButton]],
+                inline_keyboard: [
+                    ...inlineWallets,
+                    [importWalletInlineButton, generateWalletInlineButton],
+                ],
             },
         });
     }
