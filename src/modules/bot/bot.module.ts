@@ -3,7 +3,7 @@ import { TelegramModule } from 'src/thirdparty/telegram/telegram.module';
 import { BotUpdate } from './bot.update';
 import { BotAction } from './bot.action';
 import { BotService } from './bot.service';
-import { WalletsModule } from '../users/users.module';
+import { WalletsModule } from '../wallets/wallets.module';
 
 @Module({
     imports: [TelegramModule, WalletsModule],

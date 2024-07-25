@@ -5,7 +5,7 @@ import bs58 from 'bs58';
 import { CustomMessage } from './interfaces/context.interface';
 import { Scenes } from 'telegraf';
 import { MessageContent } from './bot.enum';
-import { WalletsService } from '../users/users.service';
+import { WalletsService } from '../wallets/wallets.service';
 
 @Injectable()
 export class BotService implements OnModuleInit {
